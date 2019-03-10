@@ -4,7 +4,23 @@ require 'logger'
 require 'logger/joint/version'
 
 class Logger::Joint
-  # Your code goes here...
+  # methods common to Logger and Syslog::Logger are need for.
+  def self.respond_as_logger?(object)
+    [ :level,
+      :add,
+      :debug,
+      :info,
+      :warn,
+      :error,
+      :fatal,
+      :unknown,
+      :debug?,
+      :info?,
+      :warn?,
+      :error?,
+      :fatal?
+    ].all?{|name| object.respond_to? name }
+  end
 end
 
 # Local Variables:
