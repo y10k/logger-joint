@@ -296,6 +296,61 @@ module Logger::Joint::Test
       assert_match(/: foo$/, @secondary_output.string)
     end
   end
+
+  class LoggerJointPlusMonkeyPatchTest < Test::Unit::TestCase
+    def setup
+      @primary_output = StringIO.new
+      @secondary_output = StringIO.new
+      @primary_logger = Logger.new(@primary_output)
+      @secondary_logger = Logger.new(@secondary_output)
+    end
+
+    def test_not_patched
+      assert(! ($LOADED_FEATURES.any? %r"logger/joint_plus\.rb$"))
+      assert_raise(NoMethodError) { @primary_logger.joint(@secondary_logger) }
+      assert_raise(NoMethodError) { @primary_logger + @secondary_logger }
+    end
+
+    def test_joint
+      @primary_logger.level = :info
+      @secondary_logger.level = :info
+
+      fork{
+        require 'logger/joint_plus'
+        assert($LOADED_FEATURES.any? %r"logger/joint_plus\.rb$")
+
+        joint_logger = @primary_logger.joint(@secondary_logger)
+        assert_instance_of(Logger::Joint, joint_logger)
+
+        joint_logger.info('foo')
+        assert_match(/: foo$/, @primary_output.string)
+        assert_match(/: foo$/, @secondary_output.string)
+      }
+
+      Process.wait
+      assert_equal(0, $?.exitstatus)
+    end
+
+    def test_joint_plus
+      @primary_logger.level = :info
+      @secondary_logger.level = :info
+
+      fork{
+        require 'logger/joint_plus'
+        assert($LOADED_FEATURES.any? %r"logger/joint_plus\.rb$")
+
+        joint_logger = @primary_logger + @secondary_logger
+        assert_instance_of(Logger::Joint, joint_logger)
+
+        joint_logger.info('foo')
+        assert_match(/: foo$/, @primary_output.string)
+        assert_match(/: foo$/, @secondary_output.string)
+      }
+
+      Process.wait
+      assert_equal(0, $?.exitstatus)
+    end
+  end
 end
 
 # Local Variables:
