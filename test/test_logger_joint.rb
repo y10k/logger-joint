@@ -256,6 +256,46 @@ module Logger::Joint::Test
       assert_equal('secondary is not a logger.', error.message)
     end
   end
+
+  class LoggerJointPlusRefinementTest < Test::Unit::TestCase
+    def setup
+      @primary_output = StringIO.new
+      @secondary_output = StringIO.new
+      @primary_logger = Logger.new(@primary_output)
+      @secondary_logger = Logger.new(@secondary_output)
+    end
+
+    def test_not_refined
+      assert_raise(NoMethodError) { @primary_logger.joint(@secondary_logger) }
+      assert_raise(NoMethodError) { @primary_logger + @secondary_logger }
+    end
+
+    using Logger::JointPlus
+
+    def test_joint
+      @primary_logger.level = :info
+      @secondary_logger.level = :info
+
+      joint_logger = @primary_logger.joint(@secondary_logger)
+      assert_instance_of(Logger::Joint, joint_logger)
+
+      joint_logger.info('foo')
+      assert_match(/: foo$/, @primary_output.string)
+      assert_match(/: foo$/, @secondary_output.string)
+    end
+
+    def test_joint_plus
+      @primary_logger.level = :info
+      @secondary_logger.level = :info
+
+      joint_logger = @primary_logger + @secondary_logger
+      assert_instance_of(Logger::Joint, joint_logger)
+
+      joint_logger.info('foo')
+      assert_match(/: foo$/, @primary_output.string)
+      assert_match(/: foo$/, @secondary_output.string)
+    end
+  end
 end
 
 # Local Variables:

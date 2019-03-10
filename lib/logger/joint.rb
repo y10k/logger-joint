@@ -93,11 +93,20 @@ class Logger::Joint
     apply_level_predicate(:fatal?)
   end
 
-  def joint(other_logger)
-    Logger::Joint.new(self, other_logger)
-  end
+  module PlusMethod
+    def joint(other_logger)
+      Logger::Joint.new(self, other_logger)
+    end
 
-  alias + joint
+    alias + joint
+  end
+  include PlusMethod
+end
+
+module Logger::JointPlus
+  refine Logger do
+    include Logger::Joint::PlusMethod
+  end
 end
 
 # Local Variables:
