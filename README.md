@@ -1,9 +1,9 @@
 Logger::Joint
 =============
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/logger/joint`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+logger-joint is a utility to joint multiple loggers into one logger.
+Logs can be output to multiple output destinations at the same time
+with one jointed logger.
 
 Installation
 ------------
