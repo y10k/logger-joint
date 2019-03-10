@@ -1,8 +1,13 @@
-require "logger/joint/version"
+# -*- coding: utf-8 -*-
 
-module Logger
-  module Joint
-    class Error < StandardError; end
-    # Your code goes here...
-  end
+require 'logger'
+require 'logger/joint/version'
+
+class Logger::Joint
+  # Your code goes here...
 end
+
+# Local Variables:
+# mode: Ruby
+# indent-tabs-mode: nil
+# End:
